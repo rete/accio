@@ -1,9 +1,10 @@
 
 
-#include <accio/copy.h>
+#ifndef ACCIO_COPY_IMPL_H
+#define ACCIO_COPY_IMPL_H 1
 
 namespace accio {
-
+  
   /// The standard std::memcpy call
   void copy::standard::memcpy(
     buffer_type*       destination,
@@ -51,3 +52,9 @@ namespace accio {
 #endif
   }
 }
+
+
+
+
+
+#endif  //  ACCIO_COPY_IMPL_H

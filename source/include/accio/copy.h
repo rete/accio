@@ -52,4 +52,6 @@ namespace accio {
   };
 }
 
+#include <accio/details/copy_impl.h>
+
 #endif  //  ACCIO_COPY_H
