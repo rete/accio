@@ -84,4 +84,6 @@ namespace accio {
   };
 }
 
+#include <accio/details/stream_impl.h>
+
 #endif  //  ACCIO_STREAM_H

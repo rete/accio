@@ -1,13 +1,14 @@
 
 
-#include <accio/stream.h>
+#ifndef ACCIO_STREAM_IMPL_H
+#define ACCIO_STREAM_IMPL_H 1
 
 #include <vector>
 
 namespace accio {
-  
+
   /// open a file
-  error_codes::code_type stream::open(const std::string& fn, io::open_mode mode) noexcept {
+  inline error_codes::code_type stream::open(const std::string& fn, io::open_mode mode) noexcept {
     if((io::open_state::opened == m_openstate) or (io::open_state::error == m_openstate)) {
       return error_codes::stream::already_open;
     }
@@ -24,7 +25,7 @@ namespace accio {
   }
 
   /// close the file
-  error_codes::code_type stream::close() noexcept {
+  inline error_codes::code_type stream::close() noexcept {
     if(io::open_state::closed == m_openstate) {
       return error_codes::stream::not_open;
     }
@@ -39,12 +40,12 @@ namespace accio {
     return error_codes::stream::success;
   }
 
-  error_codes::code_type stream::read_next_record_info(record_info &info) {
+  inline error_codes::code_type stream::read_next_record_info(record_info &info) {
     return read_next_record_info(info, true);
   }
-  
-  
-  error_codes::code_type stream::read_next_record_info(record_info &info, bool reset) {
+
+
+  inline error_codes::code_type stream::read_next_record_info(record_info &info, bool reset) {
     if((m_openmode != io::open_mode::read) and m_openmode != io::open_mode::read_write) {
       return error_codes::stream::bad_mode;
     }
@@ -112,3 +113,5 @@ namespace accio {
   }
 
 }
+
+#endif  //  ACCIO_STREAM_IMPL_H
