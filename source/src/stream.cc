@@ -1,10 +1,10 @@
 
 
-#include <fio/stream.h>
+#include <accio/stream.h>
 
 #include <vector>
 
-namespace fio {
+namespace accio {
   
   /// open a file
   error_codes::code_type stream::open(const std::string& fn, io::open_mode mode) noexcept {

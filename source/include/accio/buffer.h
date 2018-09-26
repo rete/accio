@@ -1,6 +1,6 @@
 
-#ifndef FIO_BUFFER_H
-#define FIO_BUFFER_H 1
+#ifndef ACCIO_BUFFER_H
+#define ACCIO_BUFFER_H 1
 
 // -- std headers
 #include <memory>
@@ -10,9 +10,9 @@
 #include <type_traits>
 
 // -- fio headers
-#include <fio/copy.h>
+#include <accio/copy.h>
 
-namespace fio {
+namespace accio {
 
   /// buffer class
   ///
@@ -356,4 +356,4 @@ namespace fio {
 
 }
 
-#endif
+#endif  //  ACCIO_BUFFER_H

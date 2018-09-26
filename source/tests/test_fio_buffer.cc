@@ -1,5 +1,5 @@
 
-#include <fio/buffer.h>
+#include <accio/buffer.h>
 
 #define do_test(name, boolean) \
   { \
@@ -10,8 +10,8 @@
   }
 
 int main() {
-  const fio::buffer<unsigned char>::size_type len = 1024*1024;
-  fio::buffer<unsigned char> wbuf(len); // 1 Mo buffer, write mode
+  const accio::buffer<unsigned char>::size_type len = 1024*1024;
+  accio::buffer<unsigned char> wbuf(len); // 1 Mo buffer, write mode
   do_test("Buffer creation", wbuf.good());
 
   wbuf.setstate(std::ios_base::eofbit);
@@ -27,7 +27,7 @@ int main() {
   do_test("buffer write integer", sizeof(int) == wbuf.write_data(wval));
 
   // read mode, use the previous buffer
-  fio::buffer<unsigned char> rbuf(wbuf.begin(), wbuf.tell(), true);
+  accio::buffer<unsigned char> rbuf(wbuf.begin(), wbuf.tell(), true);
   int rval = 0;
   do_test("buffer read back integer", sizeof(int) == rbuf.read_data(rval));
   do_test("compare write and read", rval == wval);

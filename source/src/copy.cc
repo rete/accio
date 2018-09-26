@@ -1,8 +1,8 @@
 
 
-#include <fio/copy.h>
+#include <accio/copy.h>
 
-namespace fio {
+namespace accio {
 
   /// The standard std::memcpy call
   void copy::standard::memcpy(

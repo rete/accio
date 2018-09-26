@@ -1,13 +1,13 @@
 
-#ifndef FIO_DEFINITIONS_H
-#define FIO_DEFINITIONS_H 1
+#ifndef ACCIO_DEFINITIONS_H
+#define ACCIO_DEFINITIONS_H 1
 
 // -- std headers
 #include <map> // map, multimap
 #include <sys/stat.h> // stat
 #include <stdio.h>
 
-namespace fio {
+namespace accio {
 
   struct types {
   public:
@@ -174,4 +174,4 @@ namespace fio {
   };
 }
 
-#endif
+#endif  //  ACCIO_DEFINITIONS_H

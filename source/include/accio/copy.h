@@ -1,11 +1,11 @@
 
-#ifndef FIO_COPY_H
-#define FIO_COPY_H 1
+#ifndef ACCIO_COPY_H
+#define ACCIO_COPY_H 1
 
 // -- std headers
 #include <cstring>
 
-namespace fio {
+namespace accio {
 
   struct copy {
     struct standard {
@@ -52,4 +52,4 @@ namespace fio {
   };
 }
 
-#endif
+#endif  //  ACCIO_COPY_H

@@ -1,13 +1,13 @@
 
-#ifndef FIO_STREAM_H
-#define FIO_STREAM_H 1
+#ifndef ACCIO_STREAM_H
+#define ACCIO_STREAM_H 1
 
 // -- fio headers
-#include <fio/definitions.h>
-#include <fio/copy.h>
-#include <fio/buffer.h>
+#include <accio/definitions.h>
+#include <accio/copy.h>
+#include <accio/buffer.h>
 
-namespace fio {
+namespace accio {
 
   struct record_info {
     types::option_word        m_options{0};
@@ -84,4 +84,4 @@ namespace fio {
   };
 }
 
-#endif
+#endif  //  ACCIO_STREAM_H
