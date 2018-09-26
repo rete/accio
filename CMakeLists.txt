@@ -72,6 +72,6 @@ macro( add_accio_test file )
   set_tests_properties( t_${file} PROPERTIES PASS_REGULAR_EXPRESSION "TEST_PASSED" )
 endmacro()
 
-add_accio_test( test_fio_buffer )
+add_accio_test( test_accio_buffer )
 
-add_executable( test_fio_stream ${PROJECT_SOURCE_DIR}/source/tests/test_fio_stream.cc )
+add_executable( test_accio_stream ${PROJECT_SOURCE_DIR}/source/tests/test_accio_stream.cc )
