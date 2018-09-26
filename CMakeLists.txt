@@ -55,12 +55,6 @@ include_directories(
   ${ZLIB_INCLUDE_DIR}
 )
 
-aux_source_directory( ${PROJECT_SOURCE_DIR}/source/src accio_SRCS )
-
-# add_library( accio SHARED ${accio_SRCS} )
-# target_link_libraries( accio ${ZLIB_LIBRARIES} )
-# install( TARGETS accio LIBRARY DESTINATION lib )
-
 install( DIRECTORY ${PROJECT_SOURCE_DIR}/source/include DESTINATION . )
 
 # enable ctest
