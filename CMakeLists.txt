@@ -57,16 +57,16 @@ include_directories(
 
 aux_source_directory( ${PROJECT_SOURCE_DIR}/source/src accio_SRCS )
 
-add_library( accio SHARED ${accio_SRCS} )
-target_link_libraries( accio ${ZLIB_LIBRARIES} )
-install( TARGETS accio LIBRARY DESTINATION lib )
+# add_library( accio SHARED ${accio_SRCS} )
+# target_link_libraries( accio ${ZLIB_LIBRARIES} )
+# install( TARGETS accio LIBRARY DESTINATION lib )
 
 install( DIRECTORY ${PROJECT_SOURCE_DIR}/source/include DESTINATION . )
 
 # enable ctest
-ENABLE_TESTING()
-INCLUDE(CTest)
-MARK_AS_ADVANCED( DART_TESTING_TIMEOUT )
+enable_testing()
+include(CTest)
+mark_as_advanced( DART_TESTING_TIMEOUT )
 
 macro( add_accio_test file )
   if( BUILD_TESTING )
@@ -74,8 +74,6 @@ macro( add_accio_test file )
   else()
     add_executable( ${file} EXCLUDE_FROM_ALL ${PROJECT_SOURCE_DIR}/source/tests/${file}.cc )
   endif()
-#  ADD_DEPENDENCIES( tests ${file} )
-  target_link_libraries( ${file} accio )
   add_test( t_${file} "${EXECUTABLE_OUTPUT_PATH}/${file}" )
   set_tests_properties( t_${file} PROPERTIES PASS_REGULAR_EXPRESSION "TEST_PASSED" )
 endmacro()
@@ -83,4 +81,3 @@ endmacro()
 add_accio_test( test_fio_buffer )
 
 add_executable( test_fio_stream ${PROJECT_SOURCE_DIR}/source/tests/test_fio_stream.cc )
-target_link_libraries( test_fio_stream accio )
