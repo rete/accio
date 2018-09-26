@@ -44,7 +44,10 @@ include( TestBigEndian )
 test_big_endian( BIG_ENDIAN )
 
 if( NOT BIG_ENDIAN )
-    add_definitions( "-D__LITTLE_ENDIAN__" )
+  add_definitions( "-D__LITTLE_ENDIAN__" )
+  message( STATUS "Plateform is little endian" )  
+else()
+  message( STATUS "Plateform is big endian" )
 endif()
 
 include_directories(
