@@ -50,13 +50,44 @@ namespace accio {
 
   public:
     /// Allocate a buffer in write mode
-    buffer(size_type size = default_size);
+    inline buffer(size_type size = default_size) {
+      allocator_type allocator;
+      m_buffer = allocator.allocate(size);
+      m_size = size;
+      m_memsize = size;
+      std::memset(m_buffer, 0, m_size);
+      m_current = m_buffer;
+      m_mode = std::ios_base::out | std::ios_base::binary;
+    }
 
     /// Adopt/copy the buffer and set the buffer in read mode
-    buffer(char_type *bytes, size_type size, bool cpy = false);
+    inline buffer(char_type *bytes, size_type size, bool cpy = false) {
+      if(nullptr == bytes) {
+        setstate(std::ios_base::badbit);
+        return;
+      }
+      if(cpy) {
+        allocator_type allocator;
+        m_buffer = allocator.allocate(size);
+        std::memcpy(m_buffer, bytes, size);
+      }
+      else {
+        m_buffer = bytes;
+      }
+      m_current = m_buffer;
+      m_size = size;
+      m_memsize = size;
+      m_mode = std::ios_base::in | std::ios_base::binary;
+    }
 
     /// Destructor. Always call delete on char buffer
-    ~buffer();
+    inline ~buffer() {
+      if(nullptr != m_buffer) {
+        delete [] m_buffer;
+      }
+      m_buffer = nullptr;
+      m_current = nullptr;
+    }
 
     /// Get the buffer size
     inline size_type size() const noexcept {
@@ -76,10 +107,59 @@ namespace accio {
 
     /// Copy the input buffer. Returns the number of copied len
     /// Reset the position of the buffer at beginning
-    size_type bufcpy(char_type *data, size_type size);
+    inline size_type bufcpy(char_type *data, size_type size) {
+      if(nullptr == data) {
+        setstate(std::ios_base::badbit);
+        return 0;
+      }
+      // save a memory allocation if buffer size if
+      // buffer size in memory is bigger
+      if(size > m_memsize) {
+        if(nullptr != m_buffer) {
+          delete [] m_buffer;
+          m_buffer = nullptr;
+        }
+        allocator_type allocator;
+        m_buffer = allocator.allocate(size);
+      }
+      std::memcpy(m_buffer, data, size);
+      m_size = size;
+      m_current = m_buffer;
+      clear_state();
+      return m_size;
+    }
 
     /// Seek the pointer in the buffer by an offset in the specifed way
-    pos_type seekoff(off_type off, seek_dir way);
+    inline pos_type seekoff(off_type off, seek_dir way) {
+      // from beginning
+      if(std::ios_base::beg == way) {
+        if(off > m_size) {
+          setstate(std::ios_base::failbit);
+        }
+        else {
+          m_current = begin() + off;
+        }
+      }
+      // from end of buffer
+      else if(std::ios_base::end == way) {
+        if(off > m_size) {
+          setstate(std::ios_base::failbit);
+        }
+        else {
+          m_current = end() - off;
+        }
+      }
+      // from current position
+      else {
+        if(off > (end() - current())) {
+          setstate(std::ios_base::failbit);
+        }
+        else {
+          m_current = current() + off;
+        }
+      }
+      return tell();
+    }
 
     /// Seek the position to an absolute value
     inline pos_type seekpos(pos_type pos) {
@@ -93,17 +173,85 @@ namespace accio {
 
     /// Expand the buffer by adding 'len' char at the end of buffer
     /// Returns the number of char added
-    size_type expand(size_type len);
+    inline size_type expand(size_type len) {
+      if(0 == len) {
+        return 0;
+      }
+      allocator_type allocator;
+      size_type newlen = m_size + len;
+      char_type* bytes = allocator.allocate(newlen);
+      if(nullptr != m_buffer) {
+        std::memcpy(bytes, m_buffer, m_size);
+        std::memset(bytes + m_size, 0, len);
+        delete [] m_buffer;
+      }
+      else {
+        std::memset(bytes, 0, newlen);
+      }
+      m_buffer = bytes;
+      clear_state();
+      return len;
+    }
 
     /// Read a bunch of data.
     /// Returns the size of actual read data
     /// Returns 0 if not in read mode
-    size_type read(char_type *data, size_type memlen, size_type count);
-    
+    inline size_type read(char_type *data, size_type memlen, size_type count) {
+      if((nullptr == data) or (0 == memlen) or (0 == count)) {
+        return 0;
+      }
+      if(nullptr == m_buffer) {
+        setstate(std::ios_base::badbit);
+        return 0;
+      }
+      // check read mode
+      if(not (mode() & std::ios_base::in)) {
+        setstate(std::ios_base::failbit);
+        return 0;
+      }
+      // check remaining size
+      auto rem = remaining();
+      auto total = memlen*count;
+      // reach end of buffer ?
+      if(total > rem) {
+        total = rem;
+        setstate(std::ios_base::eofbit);
+      }
+      copy_type::memcpy(data, m_current, memlen, count);
+      m_current += total;
+      return total;
+    }
+
     /// Write a bunch of data.
     /// Returns the size of actual written data
     /// Returns 0 if not in write mode
-    size_type write(const char_type *data, size_type memlen, size_type count);
+    inline size_type write(const char_type *data, size_type memlen, size_type count) {
+      if((nullptr == data) or (0 == memlen) or (0 == count)) {
+        return 0;
+      }
+      if(nullptr == m_buffer) {
+        setstate(std::ios_base::badbit);
+        return 0;
+      }
+      // check write mode
+      if(not (mode() & std::ios_base::out)) {
+        setstate(std::ios_base::failbit);
+        return 0;
+      }
+      // expand the buffer if not enough space
+      auto rem = remaining();
+      auto total = memlen*count;
+      if(total > rem) {
+        auto expfac = ((total / rem) + 1)*default_expand;
+        if(expfac != expand(expfac)) {
+          setstate(std::ios_base::failbit);
+          return 0;
+        }
+      }
+      copy_type::memcpy(m_current, data, memlen, count);
+      m_current += total;
+      return total;
+    }
 
     /// Write a bunch of data, either a single value or array
     template <typename T>
@@ -205,8 +353,7 @@ namespace accio {
     /// The current read/write position in the buffer
     char_type*                 m_current{nullptr};
   };
-}
 
-#include <details/buffer_impl.h>
+}
 
 #endif  //  ACCIO_BUFFER_H
