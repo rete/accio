@@ -2,6 +2,8 @@
 #ifndef ACCIO_BUFFER_IMPL_H
 #define ACCIO_BUFFER_IMPL_H 1
 
+#include <accio/definitions.h>
+
 namespace accio {
   
   /// Allocate a buffer in write mode
@@ -38,6 +40,27 @@ namespace accio {
     m_size = size;
     m_memsize = size;
     m_mode = std::ios_base::in | std::ios_base::binary;
+  }
+  
+  template <class charT, class copy, class alloc>
+  template <class>
+  inline buffer<charT, copy, alloc>::
+  buffer(FILE *file, size_type size) {
+    allocator_type allocator;
+    m_buffer = allocator.allocate(size);
+    m_current = m_buffer;
+    m_size = size;
+    m_memsize = size;
+    m_mode = std::ios_base::in | std::ios_base::binary;
+    // check file ptr first
+    if(nullptr == file) {
+      setstate(std::ios_base::failbit);
+      return;
+    }
+    // extract n bytes from file
+    if(io::file::read(m_buffer, 1, size, file) < size) {
+      setstate(std::ios_base::eofbit);
+    }
   }
   
   template <class charT, class copy, class alloc>
@@ -147,14 +170,15 @@ namespace accio {
     // check remaining size
     auto rem = remaining();
     auto total = memlen*count;
+    auto total_padded = (total + 3) & 0xfffffffc;
     // reach end of buffer ?
     if(total > rem) {
       total = rem;
       setstate(std::ios_base::eofbit);
     }
     copy_type::memcpy(data, m_current, memlen, count);
-    m_current += total;
-    return total;
+    m_current += total_padded;
+    return total_padded;
   }
 
   template <class charT, class copy, class alloc>
@@ -175,16 +199,17 @@ namespace accio {
     // expand the buffer if not enough space
     auto rem = remaining();
     auto total = memlen*count;
-    if(total > rem) {
-      auto expfac = ((total / rem) + 1)*default_expand;
+    auto total_padded = (total + 3) & 0xfffffffc;
+    if(total_padded > rem) {
+      auto expfac = ((total_padded / rem) + 1)*default_expand;
       if(expfac != expand(expfac)) {
         setstate(std::ios_base::failbit);
         return 0;
       }
     }
     copy_type::memcpy(m_current, data, memlen, count);
-    m_current += total;
-    return total;
+    m_current += total_padded;
+    return total_padded;
   }
 }
 
