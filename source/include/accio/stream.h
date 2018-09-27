@@ -65,6 +65,9 @@ namespace accio {
 
     ///
     error_codes::code_type read_next_record_info(record_info &info);
+    
+    /// 
+    error_codes::code_type skip_next_record(record_info &info);
 
   private:
     
