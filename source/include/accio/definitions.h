@@ -6,11 +6,11 @@
 #include <map> // map, multimap
 #include <sys/stat.h> // stat
 #include <stdio.h>
+#include <type_traits>
 
 namespace accio {
 
   struct types {
-  public:
 #if defined(__alpha__) || defined(_M_ALPHA) || defined(_LP64)
     typedef std::size_t                             address_type;
 #else
@@ -28,6 +28,20 @@ namespace accio {
     typedef unsigned int                            option_word;
     typedef unsigned int                            size_type;
     typedef unsigned int                            marker_type;
+    
+    // Ensure the use of a 32 bit padded string
+    template <size_type len, class = std::enable_if<0==len%4,size_type>>
+    struct string_helper {
+      typedef char     string_type[len];
+    };
+    
+    typedef string_helper<4>::string_type      string4;
+    typedef string_helper<8>::string_type      string8;
+    typedef string_helper<16>::string_type     string16;
+    typedef string_helper<32>::string_type     string32;
+    typedef string_helper<64>::string_type     string64;
+    typedef string_helper<128>::string_type    string128;
+    typedef string_helper<256>::string_type    string256;
 
   public:
     /// Cast any pointer to unsigned char
