@@ -54,25 +54,20 @@ namespace accio {
     }
     // save original pointer location
     auto ori_pos = io::file::tell(m_file);
-    std::cout << "ori_pos: " << ori_pos << std::endl;
     // read first 8 bytes
     unsigned char record_header[8] = {0};
     auto readop = io::file::read(record_header, 1, 8, m_file);
     if(readop < 8) {
       return error_codes::stream::eof;
     }
-    std::cout << "record_header: " << std::hex << record_header << std::endl;
     // Read record info:
     //  1) The length of the record header.
     //  2) The record marker.
     types::size_type rh_size(0);
     types::marker_type marker(0);
-    // TODO debug problem in memcpy !!
     copy_type::memcpy(types::ptr_cast(&rh_size), record_header,   4, 1);
     copy_type::memcpy(types::ptr_cast(&marker),  record_header+4, 4, 1);
     // check record marker
-    std::cout << "rh_size: " << rh_size << std::endl;
-    std::cout << "marker: " << marker << std::endl;
     if(marker != io::marker::record) {
       // go back to original position before return
       io::file::seek(m_file, ori_pos, SEEK_SET);
@@ -84,31 +79,36 @@ namespace accio {
     //  6) The length of the record name.
     //  7) The record name.
     auto read_size = (rh_size-8);
-    std::vector<unsigned char> bytes(read_size, 0);
-    readop = io::file::read(&bytes[0], 1, read_size, m_file);
-    if(readop < read_size) {
+    stream_buffer buf(m_file, read_size);
+    if(buf.eof() or buf.fail()) {
       // go back to original position before return
       io::file::seek(m_file, ori_pos, SEEK_SET);
       return error_codes::stream::eof;
     }
-    unsigned char* bytes_ptr = &bytes[0];
-    types::size_type pos(0), recname_len(0);
-    copy_type::memcpy(types::ptr_cast(&info.m_options),  bytes_ptr+pos, sizeof(info.m_options), 1);
-    pos += sizeof(info.m_options);
-    copy_type::memcpy(types::ptr_cast(&info.m_length),   bytes_ptr+pos, sizeof(info.m_length),  1);
-    pos += sizeof(info.m_length);
-    copy_type::memcpy(types::ptr_cast(&info.m_clength),  bytes_ptr+pos, sizeof(info.m_clength), 1);
-    pos += sizeof(info.m_clength);
-    copy_type::memcpy(types::ptr_cast(&recname_len),     bytes_ptr+pos, sizeof(recname_len),    1);
-    pos += sizeof(recname_len);
+    types::size_type recname_len(0);
+    buf.read_data(info.m_options, 1);
+    buf.read_data(info.m_clength, 1);
+    buf.read_data(info.m_length, 1);
+    buf.read_data(recname_len, 1);
     info.m_name.resize(recname_len);
-    char *name_str = &info.m_name[0];
-    copy_type::memcpy(types::ptr_cast(name_str),         bytes_ptr+pos, 1,                      1);
+    buf.read_data(info.m_name[0], recname_len);
     // Restore original position if specified
     if(reset) {
       io::file::seek(m_file, ori_pos, SEEK_SET);
     }
     // that's all folks !
+    return error_codes::stream::success;
+  }
+  
+  error_codes::code_type stream::skip_next_record(record_info &info) {
+    auto status = read_next_record_info(info, false);
+    auto skip_len = info.m_clength + ((4 - (info.m_clength & io::marker::align)) & io::marker::align);
+    if(error_codes::stream::success != status) {
+      return status;
+    }
+    if(io::file::seek(m_file, skip_len, SEEK_CUR)) {
+      return error_codes::stream::off_end;
+    }
     return error_codes::stream::success;
   }
 
