@@ -73,5 +73,6 @@ macro( add_accio_test file )
 endmacro()
 
 add_accio_test( test_accio_buffer )
+add_accio_test( test_accio_pods )
 
 add_executable( test_accio_stream ${PROJECT_SOURCE_DIR}/source/tests/test_accio_stream.cc )
