@@ -20,7 +20,7 @@ namespace accio {
     const buffer_type* source,
     size_type          size,
     size_type          count) {
-#ifdef FIO_LITTLE_ENDIAN
+#ifdef __LITTLE_ENDIAN__
     destination += size;
     for(size_type icnt = 0 ; icnt<count ; icnt++) {
       for(size_type ibyt = 0 ; ibyt<size ; ibyt++) {
@@ -39,7 +39,7 @@ namespace accio {
     const buffer_type* source,
     size_type          size,
     size_type          count) {
-#ifdef FIO_LITTLE_ENDIAN
+#ifdef __LITTLE_ENDIAN__
     memcpy(destination, source, size, count);
 #else
     destination += size;
