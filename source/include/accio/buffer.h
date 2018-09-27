@@ -55,6 +55,10 @@ namespace accio {
     /// Adopt/copy the buffer and set the buffer in read mode
     template <class = typename std::enable_if<sizeof(charT)==1,charT>::type>
     buffer(char_type *bytes, size_type size, bool cpy = false);
+    
+    /// Read n bytes from the file handle and set the buffer in read mode
+    template <class = typename std::enable_if<sizeof(charT)==1,charT>::type>
+    buffer(FILE *file, size_type size);
 
     /// Destructor. Always call delete on char buffer
     ~buffer();
