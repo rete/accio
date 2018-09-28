@@ -7,6 +7,8 @@
 #include <sys/stat.h> // stat
 #include <stdio.h>
 #include <type_traits>
+#include <vector> // vector
+#include <array> // array
 
 namespace accio {
 
@@ -28,21 +30,16 @@ namespace accio {
     typedef unsigned int                            option_word;
     typedef unsigned int                            size_type;
     typedef unsigned int                            marker_type;
+    typedef unsigned int                            version_type;
     
-    // Ensure the use of a 32 bit padded string
-    template <size_type len, class = std::enable_if<0==len%4,size_type>>
-    struct string_helper {
-      typedef char     string_type[len];
-    };
-    
-    typedef string_helper<4>::string_type      string4;
-    typedef string_helper<8>::string_type      string8;
-    typedef string_helper<16>::string_type     string16;
-    typedef string_helper<32>::string_type     string32;
-    typedef string_helper<64>::string_type     string64;
-    typedef string_helper<128>::string_type    string128;
-    typedef string_helper<256>::string_type    string256;
-
+    typedef std::array<char, 4>                     string4;
+    typedef std::array<char, 8>                     string8;
+    typedef std::array<char, 16>                    string16;
+    typedef std::array<char, 32>                    string32;
+    typedef std::array<char, 64>                    string64;
+    typedef std::array<char, 128>                   string128;
+    typedef std::array<char, 256>                   string256;
+      
   public:
     /// Cast any pointer to unsigned char
     template <typename T>
@@ -96,7 +93,7 @@ namespace accio {
 
   /// Version manipulation helper
   struct version {
-    typedef unsigned int          version_type;
+    typedef types::version_type      version_type;
 
     /// Encode major and minor version in a single version variable
     static inline version_type encode(version_type maj, version_type min) noexcept {
@@ -185,7 +182,35 @@ namespace accio {
         return ::stat(path, buf);
       }
     };
+    
+    struct record_header {
+      /// The record marker
+      types::marker_type      m_marker;
+      /// The record option word (compression level)
+      types::option_word      m_options;
+      /// The total record compressed size
+      types::size_type        m_compsize;
+      /// The total record un-compressed size
+      types::size_type        m_uncompsize;
+      /// The record name
+      types::string32         m_name;
+    };
+    
+    struct block_summary {
+      /// The block version
+      types::version_type     m_version;
+      /// The block size
+      types::size_type        m_size;
+      /// The block type
+      types::string64         m_type;
+      /// The block name
+      types::string64         m_name;
+    };
+    
+    typedef std::vector<block_summary>      record_summary;
   };
+  
+
 }
 
 #endif  //  ACCIO_DEFINITIONS_H
