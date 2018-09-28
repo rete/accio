@@ -20,7 +20,7 @@ namespace accio {
 #endif
     typedef void                                    ptr_type;
     typedef std::map<ptr_type*, ptr_type*>          pointed_at;
-    typedef std::multimap<ptr_type*, ptr_type*>     pointer_to;
+    typedef std::multimap<ptr_type*, ptr_type**>    pointer_to;
     // re: keep this for backward compatibility with SIO
 #if defined(_AIX) ||  defined(__alpha__) || defined(__i386__) || defined(__sparc__) || defined(__APPLE_CC__) || defined(_LP64)
     typedef long long                               int64;
@@ -41,10 +41,23 @@ namespace accio {
     typedef std::array<char, 256>                   string256;
       
   public:
-    /// Cast any pointer to unsigned char
-    template <typename T>
-    static unsigned char* ptr_cast(T *ptr) {
-      return reinterpret_cast<unsigned char *>(ptr);
+    
+    template <std::size_t n>
+    static std::array<char, n> make_string(const std::string &in) {
+      std::array<char, n> out;
+      if(in.empty()) {
+        return out;
+      }
+      for(auto i=0 ; i<std::min(in.size()-1, n) ; i++) {
+        out.at(i) = in.at(i);
+      }
+      return out;
+    }
+    
+    /// Cast any pointer to a certain char type
+    template <typename charT, typename T>
+    static charT* ptr_cast(T *ptr) {
+      return reinterpret_cast<charT *>(ptr);
     }
   };
 
