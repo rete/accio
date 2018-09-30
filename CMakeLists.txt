@@ -35,6 +35,9 @@ else()
   message( SEND_ERROR "${PROJECT_NAME} requires C++14 support. Please upgrade your compiler !" )
 endif()
 
+# options
+option( BUILD_EXAMPLES "Whether to build the examples" OFF )
+
 find_package( ZLIB REQUIRED )
 #ZLIB_INCLUDE_DIR - where to find zlib.h, etc.
 #ZLIB_LIBRARIES   - List of libraries when using zlib.
@@ -76,3 +79,7 @@ add_accio_test( test_accio_buffer )
 add_accio_test( test_accio_pods )
 
 add_executable( test_accio_stream ${PROJECT_SOURCE_DIR}/source/tests/test_accio_stream.cc )
+
+if( BUILD_EXAMPLES )
+  add_subdirectory( source/examples )
+endif()
