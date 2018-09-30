@@ -211,6 +211,54 @@ namespace accio {
     m_current += total_padded;
     return total_padded;
   }
+  
+  template <class charT, class copy, class alloc>
+  inline typename buffer<charT, copy, alloc>::size_type buffer<charT, copy, alloc>::
+  write_pointer(const address_type *addr) {
+    return this->write(addr, 4, 1);
+  }
+  
+  template <class charT, class copy, class alloc>
+  inline typename buffer<charT, copy, alloc>::size_type buffer<charT, copy, alloc>::
+  read_pointed_at(address_type *addr) {
+    address_type *old_address(nullptr);
+    auto read_op = this->read(old_address, 4, 1);
+    if(4 != read_op) {
+      return read_op;
+    }
+    m_pointed_at.insert(pointed_at::value_type(old_address, addr));
+    return read_op;
+  }
+  
+  template <class charT, class copy, class alloc>
+  inline typename buffer<charT, copy, alloc>::size_type buffer<charT, copy, alloc>::
+  read_pointer_to(address_type **addr) {
+    address_type *old_address(nullptr);
+    auto read_op = this->read(old_address, 4, 1);
+    if(4 != read_op) {
+      return read_op;
+    }
+    m_pointed_at.insert(pointed_at::value_type(old_address, addr));
+    return read_op;
+  }
+  
+  template <class charT, class copy, class alloc>
+  inline bool buffer<charT, copy, alloc>::
+  relocate() {
+    // check read mode
+    if(not (mode() & std::ios_base::in)) {
+      setstate(std::ios_base::failbit);
+      return false;
+    }
+    for(auto ptr_ref : m_pointer_to) {
+      auto ptr_iter = m_pointed_at.find(ptr_ref.first);
+      *(ptr_ref.second) = (ptr_iter != m_pointed_at.end()) ? ptr_iter->second : nullptr;
+    }
+    m_pointer_to.clear();
+    m_pointed_at.clear();
+    return true;
+  }
+  
 }
 
 #endif  //  ACCIO_BUFFER_IMPL_H

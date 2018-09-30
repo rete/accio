@@ -10,6 +10,7 @@
 #include <type_traits>
 
 // -- fio headers
+#include <accio/definitions.h>
 #include <accio/copy.h>
 
 namespace accio {
@@ -36,12 +37,16 @@ namespace accio {
     typedef alloc                   allocator_type;
     typedef copy                    copy_type;
     typedef int                     int_type;
+    typedef types::ptr_type         ptr_type;
+    typedef types::address_type     address_type;
     typedef std::size_t             pos_type;
     typedef long                    off_type;
     typedef std::size_t             size_type;
     typedef std::ios_base::seekdir  seek_dir;
     typedef std::ios_base::openmode open_mode;
     typedef std::ios_base::iostate  io_state;
+    typedef types::pointed_at       pointed_at;
+    typedef types::pointer_to       pointer_to;
 
     // constants
     static constexpr size_type      default_size = 2*1024*1024; // 2 Mo to start ...
@@ -121,6 +126,15 @@ namespace accio {
     inline size_type read_data(T &data, size_type len = 1) noexcept {
       return read(reinterpret_cast<char_type*>(&data), sizeof(T), len);
     }
+    
+    /// Write an address
+    size_type write_pointer(const address_type *addr);
+    
+    /// Read an address 'pointed at'
+    size_type read_pointed_at(address_type *addr);
+    
+    /// Read an address 'pointer to'
+    size_type read_pointer_to(address_type **addr);
 
     /// Get the opening mode
     inline open_mode mode() const noexcept {
@@ -195,6 +209,11 @@ namespace accio {
     inline void clear_state(io_state state = std::ios_base::goodbit) noexcept {
       m_iostate = state;
     }
+    
+    /// Relocate the pointers in memory after a read operation
+    /// This will also clear the internal maps of so called
+    /// 'pointer to' and 'pointed at'
+    bool relocate();
 
   private:
     /// The buffer open mode
@@ -209,6 +228,10 @@ namespace accio {
     char_type*                 m_buffer{nullptr};
     /// The current read/write position in the buffer
     char_type*                 m_current{nullptr};
+    /// The map of pointers 'pointed at'
+    pointed_at                 m_pointed_at{};
+    /// The map of pointers 'pointer to'
+    pointer_to                 m_pointer_to{};
   };
 }
 
