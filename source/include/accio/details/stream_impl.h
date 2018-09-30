@@ -7,8 +7,9 @@
 
 namespace accio {
 
-  /// open a file
-  inline error_codes::code_type stream::open(const std::string& fn, io::open_mode mode) noexcept {
+  // open a file
+  template <class charT, class copy>
+  inline error_codes::code_type stream<charT, copy>::open(const std::string& fn, io::open_mode mode) noexcept {
     if((io::open_state::opened == m_openstate) or (io::open_state::error == m_openstate)) {
       return error_codes::stream::already_open;
     }
@@ -24,8 +25,9 @@ namespace accio {
     return error_codes::stream::success;
   }
 
-  /// close the file
-  inline error_codes::code_type stream::close() noexcept {
+  // /// close the file
+  template <class charT, class copy>
+  inline error_codes::code_type stream<charT, copy>::close() noexcept {
     if(io::open_state::closed == m_openstate) {
       return error_codes::stream::not_open;
     }
@@ -39,76 +41,50 @@ namespace accio {
     // That's all folks!
     return error_codes::stream::success;
   }
-
-  inline error_codes::code_type stream::read_next_record_info(record_info &info) {
-    return read_next_record_info(info, true);
-  }
-
-
-  inline error_codes::code_type stream::read_next_record_info(record_info &info, bool reset) {
-    if((m_openmode != io::open_mode::read) and m_openmode != io::open_mode::read_write) {
-      return error_codes::stream::bad_mode;
-    }
-    if((m_openstate != io::open_state::opened)) {
-      return error_codes::stream::not_open;
-    }
-    // save original pointer location
-    auto ori_pos = io::file::tell(m_file);
-    // read first 8 bytes
-    unsigned char record_header[8] = {0};
-    auto readop = io::file::read(record_header, 1, 8, m_file);
-    if(readop < 8) {
-      return error_codes::stream::eof;
-    }
-    // Read record info:
-    //  1) The length of the record header.
-    //  2) The record marker.
-    types::size_type rh_size(0);
-    types::marker_type marker(0);
-    copy_type::memcpy(types::ptr_cast(&rh_size), record_header,   4, 1);
-    copy_type::memcpy(types::ptr_cast(&marker),  record_header+4, 4, 1);
-    // check record marker
-    if(marker != io::marker::record) {
-      // go back to original position before return
-      io::file::seek(m_file, ori_pos, SEEK_SET);
-      return error_codes::stream::no_record_marker;
-    }
-    // Read record info:
-    //  4) The length of the record data (compressed).
-    //  5) The length of the record data (uncompressed).
-    //  6) The length of the record name.
-    //  7) The record name.
-    auto read_size = (rh_size-8);
-    stream_buffer buf(m_file, read_size);
-    if(buf.eof() or buf.fail()) {
-      // go back to original position before return
-      io::file::seek(m_file, ori_pos, SEEK_SET);
-      return error_codes::stream::eof;
-    }
-    types::size_type recname_len(0);
-    buf.read_data(info.m_options, 1);
-    buf.read_data(info.m_clength, 1);
-    buf.read_data(info.m_length, 1);
-    buf.read_data(recname_len, 1);
-    info.m_name.resize(recname_len);
-    buf.read_data(info.m_name[0], recname_len);
-    // Restore original position if specified
-    if(reset) {
-      io::file::seek(m_file, ori_pos, SEEK_SET);
-    }
-    // that's all folks !
-    return error_codes::stream::success;
-  }
   
-  error_codes::code_type stream::skip_next_record(record_info &info) {
-    auto status = read_next_record_info(info, false);
-    auto skip_len = info.m_clength + ((4 - (info.m_clength & io::marker::align)) & io::marker::align);
-    if(error_codes::stream::success != status) {
-      return status;
+
+  template <class charT, class copy>
+  error_codes::code_type stream<charT, copy>::write_record(
+    const io::record_header &header,
+    const io::record_summary &summary,
+    const buffer_type &buffer) {
+    // write the record header
+    // this header has a fixed size and 
+    // is by definition 32 bit padded
+    if(1 != io::file::write(&header, sizeof(header), 1, m_file)) {
+      m_openstate = io::open_state::error;
+      return error_codes::stream::bad_write;
     }
-    if(io::file::seek(m_file, skip_len, SEEK_CUR)) {
-      return error_codes::stream::off_end;
+    // write the record summary
+    // 1) size of the summary
+    size_type summary_size = summary.size();
+    if(1 != io::file::write(&summary_size, sizeof(size_type), 1, m_file)) {
+      m_openstate = io::open_state::error;
+      return error_codes::stream::bad_write;
     }
+    // 2) the summary
+    size_type blk_size = sizeof(io::record_summary::value_type);
+    if(summary_size != io::file::write(&summary[0], blk_size, summary_size, m_file)) {
+      m_openstate = io::open_state::error;
+      return error_codes::stream::bad_write;
+    }
+    // write the buffer
+    size_type buffer_len = buffer.tell();
+    if(buffer_len != io::file::write(buffer.begin(), 1, buffer_len, m_file)) {
+      m_openstate = io::open_state::error;
+      return error_codes::stream::bad_write;
+    }
+    // Insert any necessary padding to make the next record header start
+    // on a four byte boundary in the file (to make it directly accessible
+    // for xdr read).
+    size_type padding = (4 - (buffer_len & io::marker::align)) & io::marker::align;
+    if(padding > 0) {
+      if(padding != io::file::write('\0', 1, padding, m_file)) {
+        m_openstate = io::open_state::error;
+        return error_codes::stream::bad_write;
+      }
+    }
+    // That's all folks!
     return error_codes::stream::success;
   }
 

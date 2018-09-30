@@ -9,38 +9,23 @@
 
 namespace accio {
 
-  struct record_info {
-    types::option_word        m_options{0};
-    types::size_type          m_length{0};
-    types::size_type          m_clength{0};
-    std::string               m_name{};
-  };
-
   /// stream class.
   ///
   /// Main interface to file stream (read or write)
+  template <class charT, class copy = copy::standard>
   class stream {
   public:
-    typedef copy::big_endian                   copy_type;
-    typedef buffer<unsigned char, copy_type>   stream_buffer;
+    typedef charT                              char_type;
+    typedef copy                               copy_type;
+    typedef buffer<char_type, copy_type>       buffer_type;
+    typedef typename buffer_type::size_type    size_type;
     typedef FILE                               file_type;
 
   public:
-    stream() = delete;
+    stream() = default;
     stream(const stream&) = delete;
     stream &operator=(const stream&) = delete;
     ~stream() = default;
-
-    /// Constructor with stream name
-    inline stream(const std::string &inname) :
-      m_name(inname) {
-      /* nop */
-    }
-
-    /// Get the name of stream
-    inline const std::string& name() const noexcept {
-      return m_name;
-    }
 
     /// Get the file name
     inline const std::string& fname() const noexcept {
@@ -62,22 +47,16 @@ namespace accio {
 
     /// close the file
     error_codes::code_type close() noexcept;
-
-    ///
-    error_codes::code_type read_next_record_info(record_info &info);
     
-    /// 
-    error_codes::code_type skip_next_record(record_info &info);
-
-  private:
-    
-    error_codes::code_type read_next_record_info(record_info &info, bool reset);
+    error_codes::code_type write_record(
+      const io::record_header &header,
+      const io::record_summary &summary,
+      const buffer_type &buffer
+    );
 
   private:
     /// The stream open mode
     io::open_mode              m_openmode{io::open_mode::read};
-    /// The stream name
-    std::string                m_name{};
     /// The current opened file name
     std::string                m_fname{};
     /// The stream open state
