@@ -10,6 +10,9 @@
 #include <vector> // vector
 #include <array> // array
 
+// -- accio headers
+#include <accio/string.h>
+
 namespace accio {
 
   struct types {
@@ -31,29 +34,8 @@ namespace accio {
     typedef unsigned int                            size_type;
     typedef unsigned int                            marker_type;
     typedef unsigned int                            version_type;
-    
-    typedef std::array<char, 4>                     string4;
-    typedef std::array<char, 8>                     string8;
-    typedef std::array<char, 16>                    string16;
-    typedef std::array<char, 32>                    string32;
-    typedef std::array<char, 64>                    string64;
-    typedef std::array<char, 128>                   string128;
-    typedef std::array<char, 256>                   string256;
-      
+
   public:
-    
-    template <std::size_t n>
-    static std::array<char, n> make_string(const std::string &in) {
-      std::array<char, n> out;
-      if(in.empty()) {
-        return out;
-      }
-      for(auto i=0 ; i<std::min(in.size()-1, n) ; i++) {
-        out.at(i) = in.at(i);
-      }
-      return out;
-    }
-    
     /// Cast any pointer to a certain char type
     template <typename charT, typename T>
     static charT* ptr_cast(T *ptr) {
@@ -125,13 +107,13 @@ namespace accio {
   };
 
   struct io {
-    
+
     struct marker {
       static constexpr types::marker_type align  = 0x00000003;
       static constexpr types::marker_type record = 0xabadcafe;
       static constexpr types::marker_type block  = 0xdeadbeef;
     };
-    
+
     enum class open_state {
       closed,
       opened,
@@ -156,46 +138,46 @@ namespace accio {
       }
       return modestr;
     }
-    
+
     static inline types::size_type padded_size(types::size_type size, types::size_type count) noexcept {
       return (size*count + 3) & 0xfffffffc;
     }
-    
+
     struct file {
-      
+
       static inline FILE *open(const char *filename, const char *mode) {
         return fopen(filename, mode);
       }
-      
+
       static inline long tell(FILE *stream) {
         return ftell(stream);
       }
-      
+
       static inline int seek(FILE *stream, long offset, int origin) {
         return fseek(stream, offset, origin);
       }
-      
+
       static inline int close(FILE *stream) {
         return fclose(stream);
       }
-      
+
       static inline size_t read(void *buffer, size_t size, size_t count, FILE *stream) {
         return fread(buffer, size, count, stream);
       }
-      
+
       static inline size_t write(const void *buffer, size_t size, size_t count, FILE *stream) {
         return fwrite(buffer, size, count, stream);
       }
-      
+
       static inline int flush(FILE *stream) {
         return fflush(stream);
       }
-      
+
       static inline int stat(const char *path, struct stat *buf) {
         return ::stat(path, buf);
       }
     };
-    
+
     struct record_header {
       /// The record marker
       types::marker_type      m_marker;
@@ -206,23 +188,23 @@ namespace accio {
       /// The total record un-compressed size
       types::size_type        m_uncompsize;
       /// The record name
-      types::string32         m_name;
+      string32                m_name;
     };
-    
+
     struct block_summary {
       /// The block version
       types::version_type     m_version;
       /// The block size
       types::size_type        m_size;
       /// The block type
-      types::string64         m_type;
+      string64                m_type;
       /// The block name
-      types::string64         m_name;
+      string64                m_name;
     };
-    
+
     typedef std::vector<block_summary>      record_summary;
   };
-  
+
 
 }
 
