@@ -14,6 +14,7 @@
 // -- std headers
 #include <cstring>
 #include <string>
+#include <string.h>
 
 namespace accio {
 
@@ -86,7 +87,7 @@ namespace accio {
     }
 
     /// Construct an std::string from this string
-    inline std::string asString() const {
+    inline std::string std() const {
       return std::string(c_str());
     }
 
@@ -103,6 +104,11 @@ namespace accio {
     /// Assignment operator. Same len only
     inline string<len> &operator=(const string<len> &str) {
       std::memcpy(m_string, str.m_string, len);
+    }
+
+    /// Assignment operator. Same len only
+    inline friend bool operator==(const string<len> &lhs, const char *rhs) {
+      return (strcmp(&lhs.m_string[0], rhs) == 0);
     }
 
     /// Get a character at a specific position.
