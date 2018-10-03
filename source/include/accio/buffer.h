@@ -24,6 +24,41 @@
 
 namespace accio {
 
+  /// buffer_view class
+  ///
+  /// A non-owning const buffer
+  template <class charT>
+  class buffer_view {
+  public:
+    // traits
+    typedef charT                   char_type;
+    typedef std::size_t             size_type;
+
+  public:
+    /// Constructor with buffer and size
+    inline buffer_view(const char_type *buffer, size_type len) :
+      m_buffer(buffer),
+      m_size(len) {
+      /* nop */
+    }
+
+    /// Pointer access function
+    inline const char_type *ptr() const {
+      return m_buffer;
+    }
+
+    /// Buffer size access function
+    inline size_type size() const {
+      return m_size;
+    }
+
+  private:
+    /// The raw buffer pointer
+    const char_type   *m_buffer{nullptr};
+    /// The buffer size
+    size_type          m_size{0};
+  };
+
   /// buffer class
   ///
   /// Main interface to write/read to/from a memory buffer.
