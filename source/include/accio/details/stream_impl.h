@@ -1,4 +1,12 @@
-
+//==========================================================================
+//  ACCIO: ACelerated and Compact IO library
+//--------------------------------------------------------------------------
+//
+// For the licensing terms see LICENSE file.
+// For the list of contributors see AUTHORS file.
+//
+// Author     : R.Ete
+//====================================================================
 
 #ifndef ACCIO_STREAM_IMPL_H
 #define ACCIO_STREAM_IMPL_H 1
@@ -41,7 +49,7 @@ namespace accio {
     // That's all folks!
     return error_codes::stream::success;
   }
-  
+
 
   template <class charT, class copy>
   error_codes::code_type stream<charT, copy>::write_record(
@@ -49,7 +57,7 @@ namespace accio {
     const io::record_summary &summary,
     const buffer_type &buffer) {
     // write the record header
-    // this header has a fixed size and 
+    // this header has a fixed size and
     // is by definition 32 bit padded
     if(1 != io::file::write(&header, sizeof(header), 1, m_file)) {
       m_openstate = io::open_state::error;

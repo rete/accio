@@ -1,3 +1,12 @@
+//==========================================================================
+//  ACCIO: ACelerated and Compact IO library
+//--------------------------------------------------------------------------
+//
+// For the licensing terms see LICENSE file.
+// For the list of contributors see AUTHORS file.
+//
+// Author     : R.Ete
+//====================================================================
 
 #ifndef ACCIO_COPY_H
 #define ACCIO_COPY_H 1

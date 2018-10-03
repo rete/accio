@@ -1,7 +1,13 @@
-#################################
+# ==========================================================================
+#   ACCIO: ACelerated and Compact IO library
+# ==========================================================================
+#
+# For the licensing terms see LICENSE file.
+# For the list of contributors see AUTHORS file.
+#
+#  Author     : R.Ete
+# ==========================================================================
 # cmake file for building accio
-# @author Remi Ete, DESY
-#################################
 cmake_minimum_required(VERSION 3.4)
 
 # project name
@@ -12,7 +18,7 @@ set( accio_VERSION_MAJOR 0 )
 set( accio_VERSION_MINOR 1 )
 set( accio_VERSION_PATCH 0 )
 
-# library *nix style versioning
+# library unix style versioning
 set( accio_SOVERSION "${accio_VERSION_MAJOR}.${accio_VERSION_MINOR}" )
 set( accio_VERSION "${accio_SOVERSION}.${accio_VERSION_PATCH}" )
 
@@ -48,7 +54,7 @@ test_big_endian( BIG_ENDIAN )
 
 if( NOT BIG_ENDIAN )
   add_definitions( "-D__LITTLE_ENDIAN__" )
-  message( STATUS "Plateform is little endian" )  
+  message( STATUS "Plateform is little endian" )
 else()
   message( STATUS "Plateform is big endian" )
 endif()

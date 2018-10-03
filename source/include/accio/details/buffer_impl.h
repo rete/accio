@@ -1,3 +1,12 @@
+//==========================================================================
+//  ACCIO: ACelerated and Compact IO library
+//--------------------------------------------------------------------------
+//
+// For the licensing terms see LICENSE file.
+// For the list of contributors see AUTHORS file.
+//
+// Author     : R.Ete
+//====================================================================
 
 #ifndef ACCIO_BUFFER_IMPL_H
 #define ACCIO_BUFFER_IMPL_H 1
@@ -5,7 +14,7 @@
 #include <accio/definitions.h>
 
 namespace accio {
-  
+
   /// Allocate a buffer in write mode
   template <class charT, class copy, class alloc>
   template <class>
@@ -19,7 +28,7 @@ namespace accio {
     m_current = m_buffer;
     m_mode = std::ios_base::out | std::ios_base::binary;
   }
-  
+
   template <class charT, class copy, class alloc>
   template <class>
   inline buffer<charT, copy, alloc>::
@@ -41,7 +50,7 @@ namespace accio {
     m_memsize = size;
     m_mode = std::ios_base::in | std::ios_base::binary;
   }
-  
+
   template <class charT, class copy, class alloc>
   template <class>
   inline buffer<charT, copy, alloc>::
@@ -62,7 +71,7 @@ namespace accio {
       setstate(std::ios_base::eofbit);
     }
   }
-  
+
   template <class charT, class copy, class alloc>
   inline buffer<charT, copy, alloc>::
   ~buffer() {
@@ -72,7 +81,7 @@ namespace accio {
     m_buffer = nullptr;
     m_current = nullptr;
   }
-  
+
   template <class charT, class copy, class alloc>
   inline typename buffer<charT, copy, alloc>::size_type buffer<charT, copy, alloc>::
   bufcpy(char_type *data, size_type size) {
@@ -211,13 +220,13 @@ namespace accio {
     m_current += total_padded;
     return total_padded;
   }
-  
+
   template <class charT, class copy, class alloc>
   inline typename buffer<charT, copy, alloc>::size_type buffer<charT, copy, alloc>::
   write_pointer(const address_type *addr) {
     return this->write(addr, 4, 1);
   }
-  
+
   template <class charT, class copy, class alloc>
   inline typename buffer<charT, copy, alloc>::size_type buffer<charT, copy, alloc>::
   read_pointed_at(address_type *addr) {
@@ -229,7 +238,7 @@ namespace accio {
     m_pointed_at.insert(pointed_at::value_type(old_address, addr));
     return read_op;
   }
-  
+
   template <class charT, class copy, class alloc>
   inline typename buffer<charT, copy, alloc>::size_type buffer<charT, copy, alloc>::
   read_pointer_to(address_type **addr) {
@@ -241,7 +250,7 @@ namespace accio {
     m_pointed_at.insert(pointed_at::value_type(old_address, addr));
     return read_op;
   }
-  
+
   template <class charT, class copy, class alloc>
   inline bool buffer<charT, copy, alloc>::
   relocate() {
@@ -258,7 +267,7 @@ namespace accio {
     m_pointed_at.clear();
     return true;
   }
-  
+
 }
 
 #endif  //  ACCIO_BUFFER_IMPL_H

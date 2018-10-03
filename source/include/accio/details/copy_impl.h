@@ -1,10 +1,18 @@
-
+//==========================================================================
+//  ACCIO: ACelerated and Compact IO library
+//--------------------------------------------------------------------------
+//
+// For the licensing terms see LICENSE file.
+// For the list of contributors see AUTHORS file.
+//
+// Author     : R.Ete
+//====================================================================
 
 #ifndef ACCIO_COPY_IMPL_H
 #define ACCIO_COPY_IMPL_H 1
 
 namespace accio {
-  
+
   /// The standard std::memcpy call
   void copy::standard::memcpy(
     buffer_type*       destination,

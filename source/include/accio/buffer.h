@@ -1,3 +1,12 @@
+//==========================================================================
+//  ACCIO: ACelerated and Compact IO library
+//--------------------------------------------------------------------------
+//
+// For the licensing terms see LICENSE file.
+// For the list of contributors see AUTHORS file.
+//
+// Author     : R.Ete
+//====================================================================
 
 #ifndef ACCIO_BUFFER_H
 #define ACCIO_BUFFER_H 1
@@ -60,7 +69,7 @@ namespace accio {
     /// Adopt/copy the buffer and set the buffer in read mode
     template <class = typename std::enable_if<sizeof(charT)==1,charT>::type>
     buffer(char_type *bytes, size_type size, bool cpy = false);
-    
+
     /// Read n bytes from the file handle and set the buffer in read mode
     template <class = typename std::enable_if<sizeof(charT)==1,charT>::type>
     buffer(FILE *file, size_type size);
@@ -126,13 +135,13 @@ namespace accio {
     inline size_type read_data(T &data, size_type len = 1) noexcept {
       return read(reinterpret_cast<char_type*>(&data), sizeof(T), len);
     }
-    
+
     /// Write an address
     size_type write_pointer(const address_type *addr);
-    
+
     /// Read an address 'pointed at'
     size_type read_pointed_at(address_type *addr);
-    
+
     /// Read an address 'pointer to'
     size_type read_pointer_to(address_type **addr);
 
@@ -209,7 +218,7 @@ namespace accio {
     inline void clear_state(io_state state = std::ios_base::goodbit) noexcept {
       m_iostate = state;
     }
-    
+
     /// Relocate the pointers in memory after a read operation
     /// This will also clear the internal maps of so called
     /// 'pointer to' and 'pointed at'

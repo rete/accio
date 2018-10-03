@@ -1,3 +1,12 @@
+//==========================================================================
+//  ACCIO: ACelerated and Compact IO library
+//--------------------------------------------------------------------------
+//
+// For the licensing terms see LICENSE file.
+// For the list of contributors see AUTHORS file.
+//
+// Author     : R.Ete
+//====================================================================
 
 #ifndef ACCIO_STREAM_H
 #define ACCIO_STREAM_H 1
@@ -47,7 +56,7 @@ namespace accio {
 
     /// close the file
     error_codes::code_type close() noexcept;
-    
+
     error_codes::code_type write_record(
       const io::record_header &header,
       const io::record_summary &summary,
