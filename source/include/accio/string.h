@@ -105,6 +105,7 @@ namespace accio {
     /// Assignment operator. Same len only
     inline string<len> &operator=(const string<len> &str) {
       std::memcpy(m_string, str.m_string, len);
+      return *this;
     }
 
     /// Equality operator
