@@ -38,7 +38,7 @@ namespace accio {
 
     /// Copy constructor
     inline string(const accio::string<len> &str) {
-      std::memcpy(m_string, str, len);
+      std::memcpy(m_string, str.m_string, len);
     }
 
     /// Constructor with C-string
