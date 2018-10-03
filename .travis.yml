@@ -23,11 +23,11 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - g++-5.4
+      - g++-5
 
 script:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${CXX}" == "g++"  ]];
-    then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5.4 90;
+    then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 90;
     fi
   - mkdir build
   - cd build
