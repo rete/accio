@@ -27,6 +27,7 @@ namespace accio {
   template <std::size_t len>
   class string {
   private:
+    /// The C string fixed-size array
     char              m_string[len];
 
   public:
