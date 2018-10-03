@@ -18,20 +18,20 @@ struct event_info {
 class event {
 public:
   event() = default;
-  
+
   void set(int run_nb, int event_nb) {
     m_info.m_run = run_nb;
     m_info.m_event = event_nb;
   }
-  
+
   const int &run_nb() const {
     return m_info.m_run;
   }
-  
+
   const int &event_nb() const {
     return m_info.m_event;
   }
-  
+
 private:
   event_info       m_info;
 };
@@ -46,17 +46,17 @@ struct io_config {
 class event_block_writer : public accio::block_writer<io_config> {
 public:
   event_block_writer(const event &event) :
-    accio::block_writer<io_config>(accio::types::make_string<64>("simple"), accio::types::make_string<64>("simple"), 1),
+    accio::block_writer<io_config>("simple", "simple", 1),
     m_event(event) {
     /* nop */
   }
-  
+
   accio::error_codes::code_type write(buffer_type &outbuf) const {
     outbuf.write_data(m_event.event_nb());
     outbuf.write_data(m_event.run_nb());
     return accio::error_codes::block::success;
   }
-  
+
 private:
   const event     &m_event;
 };
@@ -71,5 +71,3 @@ public:
 
 
 #endif  //  ACCIO_EXAMPLE_SIMPLE_COMMON_H
-
-
