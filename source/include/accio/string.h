@@ -107,9 +107,14 @@ namespace accio {
       std::memcpy(m_string, str.m_string, len);
     }
 
-    /// Assignment operator. Same len only
+    /// Equality operator
     inline friend bool operator==(const string<len> &lhs, const char *rhs) {
       return (strcmp(&lhs.m_string[0], rhs) == 0);
+    }
+
+    /// Inequality operator
+    inline friend bool operator!=(const string<len> &lhs, const char *rhs) {
+      return !(lhs == rhs);
     }
 
     /// Get a character at a specific position.
