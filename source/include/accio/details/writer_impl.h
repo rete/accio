@@ -3,17 +3,17 @@
 #define ACCIO_WRITER_IMPL_H 1
 
 namespace accio {
-  
+
   /// Open a file in write mode
   template <typename config>
   error_codes::code_type file_writer<config>::open(const std::string &fname) {
     return m_stream.open(fname, io::open_mode::write_new);
   }
-  
+
   // write a record
   template <typename config>
   error_codes::code_type file_writer<config>::write_record(
-    const types::string32 &name,
+    const string32 &name,
     const record_io &io_config,
     const record_type &rec) {
       // check stream state
@@ -25,7 +25,7 @@ namespace accio {
     auto status = io_config.create_writers(rec, writers);
     // tools for writting
     io::record_summary rec_summary;
-    io::record_header rec_header;    
+    io::record_header rec_header;
     buffer<char_type, copy_type> outbuf;
     // fill the record header
     rec_header.m_marker = io::marker::record;
@@ -70,7 +70,7 @@ namespace accio {
     rec_header.m_compsize = rec_header.m_uncompsize;
     m_stream.write_record(rec_header, rec_summary, outbuf);
   }
-  
+
 }
 
 
