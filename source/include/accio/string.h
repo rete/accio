@@ -18,7 +18,7 @@
 
 namespace accio {
 
-  /// A fixed string class version
+  /// A fixed size string class version
   ///
   /// Note that most of the methods mimic the std::string interface.
   /// The purpose of this class is:
