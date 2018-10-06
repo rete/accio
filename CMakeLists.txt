@@ -43,6 +43,15 @@ endif()
 
 # options
 option( BUILD_EXAMPLES "Whether to build the examples" OFF )
+option( PROFILING "Whether to compile source code with profiling option" OFF )
+
+if( PROFILING )
+  check_cxx_compiler_flag( "-pg" COMPILER_SUPPORTS_PROFILING )
+  if( COMPILER_SUPPORTS_PROFILING )
+    message( STATUS "Compiling with profiling support" )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg" )
+  endif()
+endif()
 
 find_package( ZLIB REQUIRED )
 #ZLIB_INCLUDE_DIR - where to find zlib.h, etc.
