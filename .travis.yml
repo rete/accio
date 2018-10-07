@@ -31,8 +31,7 @@ script:
     fi
   - if [[ "${TRAVIS_EVENT_TYPE}" == "cron"]];
     then ./.travis-ci.d/coverity_scan.sh;
-    else
-    ./.travis-ci.d/compile_and_test.sh;
+    else ./.travis-ci.d/compile_and_test.sh;
     fi
 
 # Don't send e-mail notifications
