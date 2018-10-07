@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/rete/accio.svg?branch=master)](https://travis-ci.org/rete/accio)
+[![Coverity Scan](https://scan.coverity.com/projects/16888/badge.svg)](https://scan.coverity.com/projects/rete-accio)
 
 ## ACCIO: ACcelerated Compact IO
 
