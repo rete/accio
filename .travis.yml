@@ -29,10 +29,10 @@ script:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${CXX}" == "g++"  ]];
     then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 90;
     fi
-    if [[ "${TRAVIS_EVENT_TYPE}" == "cron"]];
+  - if [[ "${TRAVIS_EVENT_TYPE}" == "cron"]];
     then ./.travis-ci.d/coverity_scan.sh;
     else
-    then ./.travis-ci.d/compile_and_test.sh;
+    ./.travis-ci.d/compile_and_test.sh;
     fi
 
 # Don't send e-mail notifications
