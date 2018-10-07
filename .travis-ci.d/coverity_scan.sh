@@ -19,7 +19,7 @@ export PATH=$PWD/cov-analysis-Linux/bin:$PATH
 mkdir -p build
 cd build
 
-cmake -DCMAKE_CXX_FLAGS="-Werror -Wextra" -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=$PWD/.. ..
+cmake -DCMAKE_CXX_FLAGS="-Werror -Wextra" -DBUILD_TESTING=ON -DCMAKE_INSTALL_PREFIX=$PWD/.. ..
 cov-build --dir cov-int make install
 tar czvf myproject.tgz cov-int
 
