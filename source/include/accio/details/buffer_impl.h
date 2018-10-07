@@ -73,6 +73,22 @@ namespace accio {
   }
 
   template <class charT, class copy, class alloc>
+  buffer<charT, copy, alloc>::
+  buffer(buffer<charT, copy, alloc> &&rhs) {
+    // these are not really movable
+    m_mode = rhs.m_mode; rhs.m_mode = std::ios_base::out;
+    m_iostate = rhs.m_iostate; rhs.m_iostate = std::ios_base::goodbit;
+    m_size = rhs.m_size; rhs.m_size = 0;
+    m_memsize = rhs.m_memsize; rhs.m_memsize = 0;
+    // take the buffer
+    m_buffer = rhs.m_buffer; rhs.m_buffer = nullptr;
+    m_current = rhs.m_current; rhs.m_current = nullptr;
+    // move the maps
+    m_pointed_at = std::move(rhs.pointed_at);
+    m_pointer_to = std::move(rhs.pointer_to);
+  }
+
+  template <class charT, class copy, class alloc>
   inline buffer<charT, copy, alloc>::
   ~buffer() {
     if(nullptr != m_buffer) {
@@ -80,6 +96,23 @@ namespace accio {
     }
     m_buffer = nullptr;
     m_current = nullptr;
+  }
+
+  template <class charT, class copy, class alloc>
+  buffer<charT, copy, alloc> &&buffer<charT, copy, alloc>::
+  operator=(buffer<charT, copy, alloc> &&rhs) {
+    // these are not really movable
+    m_mode = rhs.m_mode; rhs.m_mode = std::ios_base::out;
+    m_iostate = rhs.m_iostate; rhs.m_iostate = std::ios_base::goodbit;
+    m_size = rhs.m_size; rhs.m_size = 0;
+    m_memsize = rhs.m_memsize; rhs.m_memsize = 0;
+    // take the buffer
+    m_buffer = rhs.m_buffer; rhs.m_buffer = nullptr;
+    m_current = rhs.m_current; rhs.m_current = nullptr;
+    // move the maps
+    m_pointed_at = std::move(rhs.pointed_at);
+    m_pointer_to = std::move(rhs.pointer_to);
+    return *this;
   }
 
   template <class charT, class copy, class alloc>

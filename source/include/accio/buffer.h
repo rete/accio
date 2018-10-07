@@ -109,8 +109,14 @@ namespace accio {
     template <class = typename std::enable_if<sizeof(charT)==1,charT>::type>
     buffer(FILE *file, size_type size);
 
+    /// Move constructor
+    buffer(buffer<charT, copy, alloc> &&rhs);
+
     /// Destructor. Always call delete on char buffer
     ~buffer();
+
+    /// Move assignment operator
+    buffer<charT, copy, alloc> &&operator=(buffer<charT, copy, alloc> &&rhs);
 
     /// Get the buffer size
     inline size_type size() const noexcept {
