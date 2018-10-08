@@ -84,8 +84,8 @@ namespace accio {
     m_buffer = rhs.m_buffer; rhs.m_buffer = nullptr;
     m_current = rhs.m_current; rhs.m_current = nullptr;
     // move the maps
-    m_pointed_at = std::move(rhs.pointed_at);
-    m_pointer_to = std::move(rhs.pointer_to);
+    m_pointed_at = std::move(rhs.m_pointed_at);
+    m_pointer_to = std::move(rhs.m_pointer_to);
   }
 
   template <class charT, class copy, class alloc>
@@ -110,8 +110,8 @@ namespace accio {
     m_buffer = rhs.m_buffer; rhs.m_buffer = nullptr;
     m_current = rhs.m_current; rhs.m_current = nullptr;
     // move the maps
-    m_pointed_at = std::move(rhs.pointed_at);
-    m_pointer_to = std::move(rhs.pointer_to);
+    m_pointed_at = std::move(rhs.m_pointed_at);
+    m_pointer_to = std::move(rhs.m_pointer_to);
     return *this;
   }
 
