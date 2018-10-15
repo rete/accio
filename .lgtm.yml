@@ -10,3 +10,4 @@ extraction:
     index:    # Customizable step used by all languages.
       build_command:
         - make install
+
