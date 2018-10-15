@@ -10,7 +10,7 @@ Provides binary streaming IO using accelerating technology and zlib compression
 
 ### Installation
 
-```
+```shell
 mkdir build
 cd build
 cmake [-DOPTIONS=ON/OFF] ../
@@ -19,7 +19,8 @@ make install
 
 where OPTIONS can be:
 
-- BUILD_TESTING: enable testing (values=ON/OFF)
+  - BUILD_TESTING (default OFF): enable testing (values=ON/OFF)
+  - PROFILING (default OFF): enable code profiling (values=ON/OFF)
 
 ## Copyright and Licence
 
