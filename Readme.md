@@ -2,6 +2,7 @@
 [![Coverity Scan](https://scan.coverity.com/projects/16888/badge.svg)](https://scan.coverity.com/projects/rete-accio)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2272/badge)](https://bestpractices.coreinfrastructure.org/projects/2272)
 [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/rete/accio.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/rete/accio/context:cpp)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/37472b4b417d4690a8f2ebef52fe2aa4)](https://www.codacy.com/app/rete/accio?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rete/accio&amp;utm_campaign=Badge_Grade)
 
 ## ACCIO: ACcelerated Compact IO
 
