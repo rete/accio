@@ -1,12 +1,12 @@
 path_classifiers:
-  test:
-    - "source/include/accio/*.h"
-    - "source/include/accio/details/*.h"
-    - "source/include/accio/testing/*.h"
-    - "source/tests/*.cc"
-  docs:
-    - Readme.md
-    - LICENSE
+  # test:
+  #   - "source/include/accio/*.h"
+  #   - "source/include/accio/details/*.h"
+  #   - "source/include/accio/testing/*.h"
+  #   - "source/tests/*.cc"
+  # docs:
+  #   - Readme.md
+  #   - LICENSE
 extraction:
   cpp:
     prepare:    # Customizable step used by all languages.
